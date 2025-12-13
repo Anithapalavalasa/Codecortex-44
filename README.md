@@ -137,7 +137,6 @@ This will start an interactive session where you can ask questions and receive a
 4. **Response Generation**: Answers are displayed along with the source documents that informed the response.
 
 ## 📦 Dependencies
-
 - **LangChain**: Framework for developing applications powered by language models
 - **ChromaDB**: Vector database for storing and retrieving document embeddings
 - **Sentence Transformers**: State-of-the-art sentence, text, and image embeddings
@@ -229,6 +228,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 
 If you encounter any issues or have questions, please file an issue on the GitHub repository.
+
 
 
 
