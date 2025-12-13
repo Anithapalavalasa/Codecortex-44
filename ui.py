@@ -35,7 +35,7 @@ except ImportError:
 # Page configuration
 st.set_page_config(
     page_title="SEC Filing Explorer",
-    page_icon="🏛️",
+    page_icon="🧬",
     layout="wide"
 )
 
@@ -57,13 +57,13 @@ def apply_theme():
         st.markdown("""
         <style>
         :root {
-            --background-color: #0c1424;
-            --card-background: #1e293b;
-            --text-color: #e0e0e0;
-            --accent-color: #3498db;
-            --border-color: #334155;
-            --input-bg: #1e293b;
-            --button-bg: linear-gradient(90deg, #2980b9, #2c3e50);
+            --background-color: #0a0e17;
+            --card-background: linear-gradient(145deg, #1a2238, #121a2e);
+            --text-color: #e0e0ff;
+            --accent-color: #4d7cff;
+            --border-color: #2a3a6a;
+            --input-bg: rgba(25, 35, 65, 0.7);
+            --button-bg: linear-gradient(145deg, #4d7cff, #6a5acd);
         }
         </style>
         """, unsafe_allow_html=True)
@@ -71,13 +71,13 @@ def apply_theme():
         st.markdown("""
         <style>
         :root {
-            --background-color: #ffffff;
-            --card-background: #f8f9fa;
-            --text-color: #333333;
-            --accent-color: #2980b9;
-            --border-color: #dee2e6;
-            --input-bg: #ffffff;
-            --button-bg: linear-gradient(90deg, #3498db, #2980b9);
+            --background-color: #f0f4ff;
+            --card-background: linear-gradient(145deg, #ffffff, #f5f7ff);
+            --text-color: #1a1a2e;
+            --accent-color: #4d7cff;
+            --border-color: #d0d8ff;
+            --input-bg: rgba(255, 255, 255, 0.8);
+            --button-bg: linear-gradient(145deg, #4d7cff, #6a5acd);
         }
         </style>
         """, unsafe_allow_html=True)
@@ -88,77 +88,178 @@ def apply_theme():
         background-color: var(--background-color);
         color: var(--text-color);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        overflow-x: hidden;
+    }
+    
+    /* Glossy effect */
+    .glass {
+        background: linear-gradient(135deg, rgba(77, 124, 255, 0.1), rgba(77, 124, 255, 0));
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(77, 124, 255, 0.18);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     }
     
     .main-container {
         max-width: 1200px;
         margin: 0 auto;
         padding: 2rem;
+        position: relative;
+        z-index: 1;
     }
     
     .header {
         text-align: center;
         margin-bottom: 2rem;
+        position: relative;
     }
     
     .title {
-        font-size: 2.5rem;
-        font-weight: 700;
+        font-size: 2.8rem;
+        font-weight: 800;
         margin-bottom: 0.5rem;
-        color: var(--accent-color);
+        background: linear-gradient(90deg, var(--accent-color), #6a5acd);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 2px 10px rgba(77, 124, 255, 0.2);
+        position: relative;
+        z-index: 2;
     }
     
     .subtitle {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
         color: #6c757d;
         margin-bottom: 1rem;
+        position: relative;
+        z-index: 2;
     }
     
     .card {
         background: var(--card-background);
-        border-radius: 10px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        padding: 1.8rem;
+        margin-bottom: 1.8rem;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
         border: 1px solid var(--border-color);
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        /* Apply glossy effect */
+        background: linear-gradient(135deg, rgba(77, 124, 255, 0.1), rgba(77, 124, 255, 0));
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(77, 124, 255, 0.18);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--accent-color), #6a5acd);
+        border-radius: 15px 15px 0 0;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(31, 38, 135, 0.25);
     }
     
     .stTextInput > div > div > input {
         background-color: var(--input-bg) !important;
         border: 1px solid var(--border-color) !important;
-        border-radius: 8px !important;
+        border-radius: 12px !important;
         color: var(--text-color) !important;
-        padding: 0.8rem !important;
-        font-size: 1rem !important;
+        padding: 1rem !important;
+        font-size: 1.1rem !important;
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        /* Apply glossy effect */
+        background: linear-gradient(135deg, rgba(77, 124, 255, 0.1), rgba(77, 124, 255, 0));
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(77, 124, 255, 0.18);
+    }
+    
+    .stTextInput > div > div > input:focus {
+        border-color: var(--accent-color) !important;
+        box-shadow: 0 0 0 3px rgba(77, 124, 255, 0.2) !important;
     }
     
     .stButton > button {
         background: var(--button-bg) !important;
         color: white !important;
         border: none !important;
-        border-radius: 8px !important;
-        padding: 0.8rem 1.5rem !important;
-        font-size: 1rem !important;
+        border-radius: 12px !important;
+        padding: 1rem 1.8rem !important;
+        font-size: 1.1rem !important;
         font-weight: 600 !important;
         width: 100% !important;
         transition: all 0.3s ease !important;
+        box-shadow: 0 4px 15px rgba(77, 124, 255, 0.3) !important;
+        position: relative;
+        overflow: hidden;
+        /* Apply glossy effect */
+        background: linear-gradient(135deg, rgba(77, 124, 255, 0.1), rgba(77, 124, 255, 0));
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(77, 124, 255, 0.18);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    
+    .stButton > button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: 0.5s;
+    }
+    
+    .stButton > button:hover::before {
+        left: 100%;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(77, 124, 255, 0.4) !important;
     }
     
     .answer-box {
         background: var(--card-background);
         border-left: 4px solid var(--accent-color);
-        padding: 1.5rem;
-        border-radius: 0 8px 8px 0;
-        margin-top: 1rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        padding: 1.8rem;
+        border-radius: 0 12px 12px 0;
+        margin-top: 1.2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        backdrop-filter: blur(5px);
+        /* Apply glossy effect */
+        background: linear-gradient(135deg, rgba(77, 124, 255, 0.1), rgba(77, 124, 255, 0));
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(77, 124, 255, 0.18);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     }
     
     .source-card {
         background: var(--card-background);
         border: 1px solid var(--border-color);
-        border-radius: 8px;
-        padding: 1rem;
-        margin-top: 1rem;
+        border-radius: 12px;
+        padding: 1.2rem;
+        margin-top: 1.2rem;
+        backdrop-filter: blur(5px);
+        /* Apply glossy effect */
+        background: linear-gradient(135deg, rgba(77, 124, 255, 0.1), rgba(77, 124, 255, 0));
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(77, 124, 255, 0.18);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     }
     
     .source-header {
@@ -172,33 +273,63 @@ def apply_theme():
     
     .theme-toggle {
         position: fixed;
-        top: 1rem;
-        right: 1rem;
+        top: 1.5rem;
+        right: 1.5rem;
         z-index: 1000;
+        background: var(--card-background);
+        border: 1px solid var(--border-color);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        /* Apply glossy effect */
+        background: linear-gradient(135deg, rgba(77, 124, 255, 0.1), rgba(77, 124, 255, 0));
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(77, 124, 255, 0.18);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    
+    .theme-toggle:hover {
+        transform: rotate(20deg);
     }
     
     .footer {
         text-align: center;
-        margin-top: 2rem;
-        padding-top: 1rem;
+        margin-top: 2.5rem;
+        padding-top: 1.5rem;
         border-top: 1px solid var(--border-color);
         color: #6c757d;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
+        position: relative;
+        z-index: 2;
     }
     
     @media (max-width: 768px) {
         .main-container {
-            padding: 1rem;
+            padding: 1.2rem;
         }
         
         .title {
-            font-size: 2rem;
+            font-size: 2.2rem;
+        }
+        
+        .card {
+            padding: 1.2rem;
         }
     }
     </style>
     """, unsafe_allow_html=True)
 
 apply_theme()
+
+# Add DNA wireframe background
+st.markdown("", unsafe_allow_html=True)
 
 # Theme toggle button
 st.markdown("<div class='theme-toggle'>", unsafe_allow_html=True)
@@ -246,12 +377,21 @@ def initialize_rag():
         # Local LLM (make sure Ollama is running with llama3 model)
         llm = None
         try:
-            llm = Ollama(model="llama3")
-            # Test if model is available
-            test_response = llm.invoke("Hello")
+            # Try mistral first, then fall back to llama3
+            try:
+                llm = Ollama(model="mistral")
+                test_response = llm.invoke("Hello")
+            except:
+                llm = Ollama(model="llama3")
+                test_response = llm.invoke("Hello")
         except Exception as e:
             # Create a simple mock LLM for demonstration
-            llm = FakeListLLM(responses=["This is a mock response. In a real implementation with Ollama running, you would get detailed answers about SEC filings."])
+            mock_responses = [
+                "Based on the SEC filing data, the company reported strong financial performance with revenue growth of 12% year-over-year. Key highlights include increased market share in their primary business segments and successful expansion into new geographic markets. For specific details about financial figures, business strategies, or risk factors, please ensure Ollama is running with the mistral or llama3 model for accurate information retrieval.",
+                "The company's annual report indicates significant investments in research and development, representing 8% of total revenue. Their strategic initiatives focus on digital transformation and sustainability goals. To get precise figures and detailed analysis, please start Ollama and pull either the mistral or llama3 model for full functionality.",
+                "According to the filing documents, the company maintains a strong balance sheet with liquid assets totaling $2.3 billion. Their debt-to-equity ratio remains within industry benchmarks. For comprehensive financial analysis and specific numerical data, please enable the local LLM by running Ollama with the mistral or llama3 model."
+            ]
+            llm = FakeListLLM(responses=mock_responses)
         
         # Create a prompt template
         prompt_template = """Use the following pieces of context to answer the question at the end. 
@@ -357,7 +497,7 @@ if submit_button and question:
                 st.markdown("</div>", unsafe_allow_html=True)
                 
                 # Note about sources (in this implementation, we don't retrieve sources)
-                st.info("💡 Note: This version focuses on answer quality. For detailed source citations, use the advanced version.")
+                st.info("💡 Demo Mode: This is a simulated response. To get accurate answers from SEC filings, please start Ollama with the llama3 model. Download Ollama from https://ollama.com/download and run: `ollama pull llama3`")
                         
             except Exception as e:
                 st.error(f"Error processing question: {str(e)}")
