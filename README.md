@@ -52,7 +52,7 @@ sec-rag/
 
 4. Pull the required Ollama model:
    ```bash
-   ollama pull llama3
+   ollama pull mystral
    ```
 > **Note**: If you encounter issues installing `chromadb` due to missing Rust dependencies, you may need to install Rust first or use pre-compiled wheels. Alternatively, you can try:
 > ```bash
@@ -327,6 +327,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 
 If you encounter any issues or have questions, please file an issue on the GitHub repository.
+
 
 
 
