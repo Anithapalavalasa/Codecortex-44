@@ -70,7 +70,6 @@ Run the ingestion script to process the SEC filing data and create the vector da
 ```bash
 python ingest.py
 ```
-
 This will:
 - Load the SEC filing data from `data/sec_filings.csv`
 - Split the text into manageable chunks
@@ -322,6 +321,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 
 If you encounter any issues or have questions, please file an issue on the GitHub repository.
+
 
 
 
