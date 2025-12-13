@@ -118,7 +118,6 @@ Alternatively, you can use the command-line interface:
 ```bash
 python rag.py
 ```
-
 This will start an interactive session where you can ask questions and receive answers in the terminal.
 
 ## 🔧 How It Works
@@ -134,7 +133,6 @@ This will start an interactive session where you can ask questions and receive a
    - The LLM generates an answer based on the retrieved context
 
 4. **Response Generation**: Answers are displayed along with the source documents that informed the response.
-
 ## 📦 Dependencies
 - **LangChain**: Framework for developing applications powered by language models
 - **ChromaDB**: Vector database for storing and retrieving document embeddings
@@ -143,7 +141,6 @@ This will start an interactive session where you can ask questions and receive a
 - **Ollama**: Tool for running large language models locally
 
 ## 🎨 UI Components
-
 Our applications offer various user interfaces:
 
 ### Basic UI (`ui.py`)
@@ -227,6 +224,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 
 If you encounter any issues or have questions, please file an issue on the GitHub repository.
+
 
 
 
