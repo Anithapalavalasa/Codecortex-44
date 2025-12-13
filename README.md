@@ -1,183 +1,318 @@
-SEC Filing Summarizer & Q&A using RAG
-1. Problem Statement
+# 🏦 SEC Filing Summarizer & Q&A using RAG
 
-SEC filings such as 10-K and 10-Q are critical for investors, analysts, and students, but they are:
+A Retrieval-Augmented Generation (RAG) system that enables natural language question-answering on SEC filings (10-K, 10-Q) with verifiable source citations.
 
-Extremely long (100+ pages)
+## 📋 Problem Statement
 
-Unstructured and dense
+Investors, analysts, and students face significant difficulty in quickly understanding large and complex SEC filings. These documents are:
+- **Lengthy**: Often 100+ pages
+- **Unstructured**: Dense financial and legal text
+- **Domain-specific**: Require expertise to extract insights
 
-Difficult to analyze without financial expertise
+**Objective**: Build a Generative AI–powered system that allows users to:
+- ✅ Ask natural language questions about SEC filings
+- ✅ Receive accurate, context-aware answers
+- ✅ View verifiable citations from the original document
 
-Extracting insights like risk factors, management discussion, litigation risks, and financial performance is time-consuming and error-prone.
+This system reduces analysis time, improves decision-making, and demonstrates real-world financial document intelligence.
 
-Objective:
-Build a Generative AI–powered system that enables users to:
+## 🎯 Domain
 
-Ask natural language questions about SEC filings
+- **Primary**: Finance
+- **Secondary**: Productivity, Education
 
-Receive accurate, context-aware answers
+## 🏗️ Solution Overview
 
-View verifiable citations from the original document
+We propose a **Retrieval-Augmented Generation (RAG)** based system that:
+1. Processes real SEC filings (PDF/TXT)
+2. Chunks documents into semantically meaningful sections
+3. Generates embeddings for each chunk
+4. Stores embeddings in ChromaDB vector database
+5. Retrieves relevant chunks based on user queries
+6. Uses an LLM to generate grounded answers with citations
 
-This system reduces analysis time and demonstrates real-world Financial Document Intelligence using RAG.
+### High-Level Architecture
 
-2. Domain
+```
+SEC Filing (PDF)
+    ↓
+Document Parser (PyPDF)
+    ↓
+Text Chunking (RecursiveCharacterTextSplitter)
+    ↓
+Embedding Generation (sentence-transformers)
+    ↓
+Vector Database (ChromaDB)
+    ↓
+Query → Retrieve Relevant Chunks
+    ↓
+LLM (LLaMA 3) → Generate Answer + Citations
+```
 
-Primary: Finance 🏦
+## 🛠️ Technologies Used
 
-Secondary: Productivity, Education
+| Component | Technology |
+|-----------|-----------|
+| **Language** | Python 3.8+ |
+| **LLM** | LLaMA 3 (via Ollama – Local LLM) |
+| **Embeddings** | sentence-transformers (all-MiniLM-L6-v2) |
+| **Vector Database** | ChromaDB |
+| **Framework** | LangChain |
+| **Document Parsing** | PyPDF, unstructured |
 
-3. Solution Overview
+## 📊 Data Source
 
-This project implements a Retrieval-Augmented Generation (RAG) pipeline to answer questions from real SEC filings.
+**SEC Filings Dataset (Kaggle)**: https://www.kaggle.com/datasets/kharanshuvalangar/sec-filings
 
-High-Level Workflow
+**Sample used in demo**: Apple Inc. 10-K filing
 
-Load SEC filing (PDF / TXT)
+## 📁 Project Structure
 
-Chunk document into semantic sections
-
-Generate embeddings for each chunk
-
-Store embeddings in ChromaDB
-
-Retrieve relevant chunks based on user query
-
-Use an LLM to generate grounded answers
-
-Display answers with source citations
-
-4. Technologies Used
-
-Language: Python
-
-LLM: LLaMA 3 (via Ollama – Local LLM)
-
-Embeddings: sentence-transformers (MiniLM)
-
-Vector Database: ChromaDB
-
-Framework: LangChain
-
-Document Parsing: unstructured, PyPDF
-
-Optional APIs: Groq / OpenAI (configurable)
-
-5. Data Source
-
-Dataset: SEC Filings Dataset (Kaggle)
-
-Link: https://www.kaggle.com/datasets/kharanshuvalangar/sec-filings
-
-Sample Used in Demo:
-
-Apple Inc. – 10-K Filing
-
-6. Project Structure
+```
 sec-rag/
 │
 ├── data/
-│   └── apple_10k.pdf
+│   └── apple_10k.pdf          # SEC filing (add your own)
 │
-├── ingest.py        # Document loading, chunking, embeddings
-├── rag.py           # Question answering with citations
-├── requirements.txt
-├── README.md
-└── chroma_db/       # Vector store (auto-created)
-7. Setup & Run Instructions
-Step 1: Environment Setup
+├── ingest.py                   # Document loading, chunking, embeddings
+├── rag.py                      # Question answering with citations
+├── requirements.txt            # Python dependencies
+├── README.md                   # This file
+└── chroma_db/                  # Vector store (auto-created)
+```
+
+## 🚀 Setup & Run Instructions
+
+### Step 1: Environment Setup
+
+```bash
+# Create virtual environment
 python -m venv venv
-source venv/bin/activate      # Linux / Mac
-venv\Scripts\activate       # Windows
+
+# Activate virtual environment
+# On Windows:
+venv\Scripts\activate
+# On Linux/Mac:
+source venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
-Step 2: Prepare Local LLM
+```
+
+### Step 2: Prepare Local LLM (Ollama)
+
+```bash
+# Install Ollama from https://ollama.ai
+
+# Pull LLaMA 3 model
 ollama pull llama3
-ollama run llama3
-Step 3: Ingest SEC Filing
+
+# Verify installation
+ollama run llama3 "Hello, world!"
+```
+
+**Note**: Ensure Ollama is running (`ollama serve`) before using the RAG system.
+
+### Step 3: Prepare SEC Filing
+
+1. Download a SEC filing (10-K, 10-Q) from [SEC EDGAR](https://www.sec.gov/edgar/searchedgar/companysearch.html) or use the Kaggle dataset
+2. Place the PDF file in the `data/` directory
+3. Example: `data/apple_10k.pdf`
+
+### Step 4: Ingest SEC Filing
+
+```bash
 python ingest.py
+```
+
+Or specify a custom file path:
+```bash
+python ingest.py data/your_filing.pdf
+```
 
 This will:
+- Load and parse the PDF
+- Chunk the document into semantic sections
+- Generate embeddings
+- Store in ChromaDB
 
-Load the SEC filing
+**Expected output**:
+```
+Loading document: apple_10k.pdf
+Loaded 150 pages/sections
+Chunking documents...
+Created 450 chunks
+Generating embeddings and storing in vector database...
+✅ Successfully ingested 450 chunks into 'sec_filings' collection
+```
 
-Chunk the document
+### Step 5: Ask Questions
 
-Generate embeddings
-
-Store them in ChromaDB
-
-Step 4: Ask Questions
+**Interactive Mode**:
+```bash
 python rag.py
-8. Example Queries
+```
 
-"What are the major risk factors mentioned?"
+**Single Question**:
+```bash
+python rag.py "What are the major risk factors mentioned?"
+```
 
-"Summarize management discussion"
+## 💡 Example Queries
 
-"Are there any litigation risks?"
+- "What are the major risk factors mentioned?"
+- "Summarize management discussion and analysis"
+- "Are there any litigation risks?"
+- "How did revenue change year over year?"
+- "What is the company's business model?"
+- "What are the key financial metrics?"
+- "Describe the competitive landscape"
 
-"How did revenue change year over year?"
+## 📝 Example Output
 
-9. Evaluation & Guardrails
-Evaluation Approach
+```
+🔍 Question: What are the major risk factors mentioned?
 
-Manual factual verification using citations
+📝 Answer:
+Based on the SEC filing, the major risk factors include:
 
-Consistency checks across repeated queries
+1. **Market Competition**: The company faces intense competition in the technology sector...
+2. **Supply Chain Risks**: Dependencies on third-party manufacturers and suppliers...
+3. **Regulatory Changes**: Potential impact of new regulations on operations...
+4. **Cybersecurity Threats**: Risk of data breaches and cyber attacks...
 
-Retrieval relevance (Top-k chunk accuracy)
+[Source citations included]
 
-Guardrails
+📚 Sources (4 chunks):
+--------------------------------------------------------------------------------
 
-Answers strictly limited to retrieved context
+[1] Source: apple_10k | Page: 12
+    Snippet: Item 1A. Risk Factors. The Company's business, financial condition...
 
-Mandatory source citation for every response
+[2] Source: apple_10k | Page: 13
+    Snippet: Competition. The markets for the Company's products and services...
+```
 
-No hallucinated financial numbers
+## ✅ Evaluation & Guardrails
 
-Informational use only (not financial advice)
+### Evaluation Approach
 
-10. Limitations
+1. **Manual Factual Verification**: Answers verified against original document using citations
+2. **Consistency Check**: Repeated queries tested for consistency
+3. **Retrieval Relevance**: Top-k chunk accuracy measured
+4. **Citation Accuracy**: Source references validated
 
-Performance depends on chunking strategy
+### Guardrails
 
-Complex financial interpretation may require human judgment
+- ✅ **Context-only answers**: System restricted to retrieved context only
+- ✅ **Mandatory citations**: Every response includes source citations
+- ✅ **No hallucination**: Financial numbers not generated without source
+- ✅ **Explicit uncertainty**: System states when answer cannot be found in context
 
-Currently supports single-document querying
+### Limitations
 
-11. Innovation & Impact
-Innovation
+- Performance depends on chunking quality
+- Financial interpretation is informational, not advisory
+- Local LLM may have slower response times than cloud APIs
+- Large documents may require more computational resources
 
-Real-world financial document RAG system
+## 🎯 Innovation & Impact
 
-Explainable AI through citations
+### Innovation
 
-Fully local LLM (no paid API dependency)
+- ✅ Combines real financial documents with RAG architecture
+- ✅ Provides explainable AI via mandatory citations
+- ✅ Uses local LLM (Ollama) to reduce dependency on paid APIs
+- ✅ Semantic chunking for better context retrieval
 
-Impact & Expandability
+### Impact & Expandability
 
-Can be extended to:
+This system can be extended to:
 
-Multi-company comparison
+- **Multi-company comparison**: Compare risk factors across companies
+- **Risk scoring agents**: Automated risk assessment
+- **Financial trend analysis**: Time-series analysis across filings
+- **Web interface**: FastAPI or Streamlit UI
+- **Real-time updates**: Process new filings automatically
+- **Multi-document RAG**: Query across multiple filings simultaneously
 
-Risk scoring agents
+## 🔧 Configuration
 
-Financial trend analysis
+### Customize Embedding Model
 
-FastAPI / Streamlit interface
+Edit `ingest.py` and `rag.py`:
+```python
+embedding_model = "sentence-transformers/all-mpnet-base-v2"  # Larger, more accurate
+```
 
-12. Hackathon Compliance Checklist
+### Adjust Chunk Size
 
+Edit `ingest.py`:
+```python
+chunk_size=1500,      # Larger chunks (more context)
+chunk_overlap=300     # More overlap
+```
 
+### Change LLM Model
 
+Edit `rag.py`:
+```python
+llm_model = "llama3:8b"  # or "mistral", "codellama", etc.
+```
 
-13. Demo Video
+### Retrieve More Context
 
-(To be added – YouTube link)
+Edit `rag.py`:
+```python
+k = 6  # Retrieve top 6 chunks instead of 4
+```
 
-14. Author
+## 🐛 Troubleshooting
 
-Palavalasa Anitha
-B.Tech IT, JNTU-GV
+### Ollama Connection Error
+
+```bash
+# Ensure Ollama is running
+ollama serve
+
+# Verify model is installed
+ollama list
+
+# Pull model if missing
+ollama pull llama3
+```
+
+### Vector Database Not Found
+
+```bash
+# Run ingestion first
+python ingest.py
+```
+
+### Memory Issues
+
+- Reduce `chunk_size` in `ingest.py`
+- Reduce `k` (retrieval count) in `rag.py`
+- Use smaller embedding model
+
+## 📚 References
+
+- [LangChain Documentation](https://python.langchain.com/)
+- [ChromaDB Documentation](https://docs.trychroma.com/)
+- [Ollama Documentation](https://github.com/ollama/ollama)
+- [SEC EDGAR Database](https://www.sec.gov/edgar/searchedgar/companysearch.html)
+
+## 👤 Author
+
+**Palavalasa Anitha**  
+B.Tech IT, JNTU-GV  
 GenAI Hackathon Participant
+
+## 📄 License
+
+This project is created for educational and hackathon purposes.
+
+---
+
+**Note**: This system is for informational purposes only and does not constitute financial advice. Always consult with qualified financial professionals for investment decisions.
+
