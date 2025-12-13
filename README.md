@@ -168,11 +168,8 @@ Manual inspection
 Does the answer faithfully represent the source text without distortion?
 
 Important for:
-
 Risk disclosures
-
 Revenue numbers
-
 Legal statements
 
 5️⃣ Latency & Performance
@@ -327,6 +324,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 
 If you encounter any issues or have questions, please file an issue on the GitHub repository.
+
 
 
 
