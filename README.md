@@ -54,7 +54,6 @@ sec-rag/
    ```bash
    ollama pull llama3
    ```
-
 > **Note**: If you encounter issues installing `chromadb` due to missing Rust dependencies, you may need to install Rust first or use pre-compiled wheels. Alternatively, you can try:
 > ```bash
 > pip install --only-binary=all -r requirements.txt
@@ -328,6 +327,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 
 If you encounter any issues or have questions, please file an issue on the GitHub repository.
+
 
 
 
