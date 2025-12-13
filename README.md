@@ -17,7 +17,6 @@ Investors, analysts, and students face significant difficulty in quickly underst
 This system reduces analysis time, improves decision-making, and demonstrates real-world financial document intelligence.
 
 ## 🎯 Domain
-
 - **Primary**: Finance
 - **Secondary**: Productivity, Education
 
