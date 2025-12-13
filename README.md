@@ -42,7 +42,6 @@ sec-rag/
    git clone <repository-url>
    cd sec-rag
    ```
-
 2. Create a virtual environment:
    ```bash
    python -m venv .venv
@@ -331,6 +330,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 
 If you encounter any issues or have questions, please file an issue on the GitHub repository.
+
 
 
 
