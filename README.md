@@ -304,7 +304,8 @@ python ingest.py
 
 ## 👤 Author
 
-**Palavalasa Anitha**  
+**Palavalasa Anitha** 
+
 B.Tech IT, JNTU-GV  
 GenAI Hackathon Participant
 
