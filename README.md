@@ -89,6 +89,117 @@ This will:
 
 ## ▶️ Running the Application
 
+Common Guardrails in a RAG System (Like Yours)
+1️⃣ Context-Only Answering (Anti-Hallucination)
+
+The model is forced to answer only from retrieved SEC documents
+
+If information is not found → AI says:
+
+“The provided documents do not contain enough information.”
+
+✅ Benefit: Prevents made-up financial facts
+
+2️⃣ Source Attribution Guardrail
+
+Every answer must include citations
+
+If no sources are retrieved → answer is blocked
+
+✅ Benefit: Builds trust & auditability
+
+3️⃣ Confidence Threshold Guardrail
+
+If similarity score from ChromaDB is low:
+
+Do NOT generate an answer
+
+Ask user to rephrase question
+
+✅ Benefit: Avoids weak or misleading responses
+
+4️⃣ Input Validation Guardrail
+
+Blocks:
+
+Irrelevant questions (e.g., “Who is the CEO of Google?”)
+
+Prompt injection attempts
+
+✅ Benefit: Protects system integrity
+
+5️⃣ Output Format Guardrail
+
+Answers follow a strict structure:
+
+Answer
+
+Sources
+
+Confidence / Disclaimer
+
+✅ Benefit: Professional, consistent responses
+
+📊 Evaluations (Measuring Quality & Accuracy)
+
+Evaluation = how well your RAG system performs.
+Judges LOVE this because it shows engineering maturity.
+
+Key RAG Evaluation Metrics (Explainable to Judges)
+1️⃣ Answer Correctness
+
+Is the answer factually correct based on the SEC filing?
+
+Compare AI answer vs actual filing text
+
+Manually or automatically checked
+
+2️⃣ Groundedness (Most Important)
+
+Is the answer strictly based on retrieved documents?
+
+❌ Bad: AI adds extra financial advice
+✅ Good: AI quotes exact SEC sections
+
+3️⃣ Context Relevance
+
+Are retrieved chunks actually relevant to the question?
+
+Measured by:
+
+Embedding similarity scores
+
+Manual inspection
+
+4️⃣ Faithfulness
+
+Does the answer faithfully represent the source text without distortion?
+
+Important for:
+
+Risk disclosures
+
+Revenue numbers
+
+Legal statements
+
+5️⃣ Latency & Performance
+
+How fast does the system respond?
+
+Measured by:
+
+Retrieval time
+
+LLM response time
+
+6️⃣ Failure Handling
+
+Does the system behave safely when it doesn’t know the answer?
+
+Expected behavior:
+
+“Information not available in the provided filings.”
 ### Web Interface (Recommended)
 
 We provide multiple web interfaces for different preferences:
@@ -224,6 +335,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 
 If you encounter any issues or have questions, please file an issue on the GitHub repository.
+
 
 
 
