@@ -48,7 +48,6 @@ sec-rag/
    python -m venv .venv
    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
    ```
-
 3. Install dependencies:
    ```bash
    pip install -r requirements.txt
@@ -332,6 +331,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 
 If you encounter any issues or have questions, please file an issue on the GitHub repository.
+
 
 
 
