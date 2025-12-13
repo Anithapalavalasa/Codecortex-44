@@ -303,6 +303,8 @@ To verify everything is set up correctly:
    ```bash
    pip list | grep -E "langchain|chroma|streamlit|sentence-transformers"
    ```
+references:
+https://chatgpt.com/share/693d9f9c-74f8-8000-b9d9-0609ba1102e1
 
 ### Performance Tips
 
@@ -321,6 +323,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 
 If you encounter any issues or have questions, please file an issue on the GitHub repository.
+
 
 
 
