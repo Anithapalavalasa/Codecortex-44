@@ -1,17 +1,12 @@
 # SEC Filing RAG Explorer
 
 An AI-powered application that allows you to ask questions about SEC filings and get answers with sources using Retrieval-Augmented Generation (RAG).
-
 <div align="center">
-
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Streamlit](https://img.shields.io/badge/Streamlit-Web%20App-red)](https://streamlit.io/)
-
 </div>
-
 > **Note**: This project requires several Python packages that may have complex installation requirements due to native dependencies. See [INSTALLATION.md](INSTALLATION.md) for detailed installation instructions.
-
 ## 📁 Project Structure
 
 ```
@@ -238,3 +233,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 
 If you encounter any issues or have questions, please file an issue on the GitHub repository.
+
