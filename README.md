@@ -21,7 +21,6 @@ sec-rag/
 > **Note**: The `chroma_db/` directory will be created after running the ingestion script.
 
 ## 🚀 Features
-
 - **Natural Language Querying**: Ask questions about SEC filings in plain English
 - **Source Attribution**: See exactly which parts of the filing support each answer
 - **Web Interface**: User-friendly Streamlit interface
@@ -334,6 +333,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 
 If you encounter any issues or have questions, please file an issue on the GitHub repository.
+
 
 
 
