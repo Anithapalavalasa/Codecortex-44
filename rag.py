@@ -54,10 +54,15 @@ retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
 # Initialize Ollama local LLM
 llm = None
 try:
-    llm = Ollama(model="llama3")
-    # Test if model is available
-    test_response = llm.invoke("Hello")
-    print("✅ Connected to Ollama successfully")
+    # Try mistral first, then fall back to llama3
+    try:
+        llm = Ollama(model="mistral")
+        test_response = llm.invoke("Hello")
+        print("✅ Connected to Ollama with mistral model")
+    except:
+        llm = Ollama(model="llama3")
+        test_response = llm.invoke("Hello")
+        print("✅ Connected to Ollama with llama3 model")
 except Exception as e:
     print(f"Warning: Could not connect to Ollama: {e}")
     print("Using a mock LLM instead")
