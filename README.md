@@ -27,9 +27,7 @@ sec-rag/
 - **Open Source Models**: Uses locally-running LLMs via Ollama
 
 ## 🛠️ Setup Instructions
-
 ### Prerequisites
-
 1. Python 3.8 or higher
 2. [Ollama](https://ollama.com/) installed and running (optional, for local LLM)
 3. [Git](https://git-scm.com/) (optional, for cloning the repository)
@@ -330,6 +328,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 
 If you encounter any issues or have questions, please file an issue on the GitHub repository.
+
 
 
 
