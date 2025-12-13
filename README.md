@@ -39,7 +39,6 @@ sec-rag/
 > **Important**: Due to native dependencies in some packages (especially chromadb), you may encounter installation issues. Please refer to [INSTALLATION.md](INSTALLATION.md) for detailed installation instructions and troubleshooting tips.
 
 ### Installation
-
 1. Clone or download this repository:
    ```bash
    git clone <repository-url>
@@ -335,6 +334,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 
 If you encounter any issues or have questions, please file an issue on the GitHub repository.
+
 
 
 
