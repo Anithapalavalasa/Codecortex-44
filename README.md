@@ -49,7 +49,6 @@ sec-rag/
    ```bash
    pip install -r requirements.txt
    ```
-
 4. Pull the required Ollama model:
    ```bash
    ollama pull mystral
@@ -60,7 +59,6 @@ sec-rag/
 > ```
 
 ### Data Preparation
-
 Ensure your SEC filing data is in CSV format and placed in the `data/sec_filings.csv` file.
 
 The CSV should have columns appropriate for your SEC filing data. The ingestion script will process this data and create embeddings for querying.
@@ -324,6 +322,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 
 If you encounter any issues or have questions, please file an issue on the GitHub repository.
+
 
 
 
