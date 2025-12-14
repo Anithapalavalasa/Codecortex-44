@@ -1,43 +1,42 @@
-#!/usr/bin/env python3
-"""
-Test script to verify that all required packages can be imported.
-"""
-
 import sys
+import os
 
-def test_import(package_name):
-    try:
-        __import__(package_name)
-        print(f"✓ {package_name} imported successfully")
-        return True
-    except ImportError as e:
-        print(f"✗ {package_name} import failed: {e}")
-        return False
+print("Testing imports...")
 
-def main():
-    print("Testing package imports...")
-    print("=" * 40)
+# Test langchain_huggingface
+try:
+    from langchain_huggingface import HuggingFaceEmbeddings
+    print("✅ langchain_huggingface: OK")
+except ImportError as e:
+    print("❌ langchain_huggingface: FAILED -", str(e))
     
-    packages = [
-        "streamlit",
-        "langchain",
-        "langchain_community",
-        "chromadb",
-        "sentence_transformers",
-        "ollama"
-    ]
-    
-    results = []
-    for package in packages:
-        results.append(test_import(package))
-    
-    print("=" * 40)
-    if all(results):
-        print("All packages imported successfully!")
-        return 0
-    else:
-        print("Some packages failed to import. Please check INSTALLATION.md for help.")
-        return 1
+# Test langchain_chroma
+try:
+    from langchain_chroma import Chroma
+    print("✅ langchain_chroma: OK")
+except ImportError as e:
+    print("❌ langchain_chroma: FAILED -", str(e))
 
-if __name__ == "__main__":
-    sys.exit(main())
+# Test langchain_ollama
+try:
+    from langchain_ollama import OllamaLLM
+    print("✅ langchain_ollama: OK")
+except ImportError as e:
+    print("❌ langchain_ollama: FAILED -", str(e))
+
+# Test basic langchain components
+try:
+    from langchain_core.runnables import RunnablePassthrough
+    from langchain_core.prompts import PromptTemplate
+    from langchain_core.output_parsers import StrOutputParser
+    print("✅ langchain_core components: OK")
+except ImportError as e:
+    print("❌ langchain_core components: FAILED -", str(e))
+
+# Check if database exists
+if os.path.exists("chroma_db"):
+    print("✅ Chroma database: FOUND")
+else:
+    print("❌ Chroma database: NOT FOUND")
+
+print("Import test completed.")

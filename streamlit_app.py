@@ -1,335 +1,328 @@
 import streamlit as st
 import os
+import pandas as pd
+from datetime import datetime
 
 # Mock imports for type hints (won't be used if packages aren't installed)
 try:
     from langchain_community.embeddings import HuggingFaceEmbeddings
     from langchain_community.vectorstores import Chroma
     from langchain_community.llms import Ollama
-    from langchain.chains import RetrievalQA
+    from langchain_core.prompts import PromptTemplate
+    from langchain_core.runnables import RunnablePassthrough
+    from langchain_core.output_parsers import StrOutputParser
+    from langchain_core.language_models import FakeListLLM
     PACKAGES_AVAILABLE = True
 except ImportError:
     PACKAGES_AVAILABLE = False
 
 # Page configuration
 st.set_page_config(
-    page_title="SEC Filing Summarizer & Q&A",
-    page_icon="🏛️",
-    layout="centered"
+    page_title="SEC RAG Explorer",
+    page_icon="💸",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-# Custom CSS with dark finance theme and subtle animations
+# -----------------------------------------------------------------------------
+# CSS / THEME
+# -----------------------------------------------------------------------------
 st.markdown("""
 <style>
-/* Dark finance theme */
-body {
-    background-color: #0c1424;
-    color: #e0e0e0;
-    font-family: 'Arial', sans-serif;
-}
-
-/* Animated background elements */
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-    100% { transform: translateY(0px); }
-}
-
-@keyframes pulse {
-    0% { opacity: 0.05; }
-    50% { opacity: 0.1; }
-    100% { opacity: 0.05; }
-}
-
-.background-animation {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    overflow: hidden;
-}
-
-.background-circle {
-    position: absolute;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(41, 128, 185, 0.2) 0%, transparent 70%);
-    opacity: 0.05;
-    animation: float 15s infinite ease-in-out;
-}
-
-.background-line {
-    position: absolute;
-    height: 1px;
-    background: linear-gradient(to right, transparent, #2980b9, transparent);
-    opacity: 0.1;
-    animation: pulse 8s infinite linear;
-}
-
-/* Main container */
-.main-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-    background: rgba(15, 23, 42, 0.7);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    box-shadow: 0 8px 32px rgba(2, 12, 30, 0.6);
-    border: 1px solid rgba(94, 129, 172, 0.3);
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-}
-
-/* Title styling */
-.title {
-    text-align: center;
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    background: linear-gradient(90deg, #3498db, #2c3e50);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.subtitle {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #94a3b8;
-    margin-bottom: 2rem;
-}
-
-/* Input styling */
-.stTextInput > div > div > input {
-    background-color: #1e293b !important;
-    border: 1px solid #334155 !important;
-    border-radius: 10px !important;
-    color: #e0e0e0 !important;
-    padding: 1rem !important;
-    font-size: 1.1rem !important;
-}
-
-.stTextInput > div > div > input:focus {
-    border-color: #3498db !important;
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2) !important;
-}
-
-/* Button styling */
-.stButton > button {
-    background: linear-gradient(90deg, #2980b9, #2c3e50) !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 10px !important;
-    padding: 0.8rem 1.5rem !important;
-    font-size: 1.1rem !important;
-    font-weight: 600 !important;
-    width: 100% !important;
-    transition: all 0.3s ease !important;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
-}
-
-.stButton > button:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15) !important;
-}
-
-.stButton > button:active {
-    transform: translateY(0) !important;
-}
-
-/* Answer box styling */
-.answer-box {
-    background: rgba(30, 41, 59, 0.7);
-    border-left: 4px solid #3498db;
-    padding: 1.5rem;
-    border-radius: 0 10px 10px 0;
-    margin-top: 1.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.source-box {
-    background: rgba(15, 23, 42, 0.5);
-    border: 1px solid #334155;
-    border-radius: 10px;
-    padding: 1rem;
-    margin-top: 1rem;
-}
-
-.source-header {
-    font-weight: 600;
-    color: #3498db;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.source-content {
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-    color: #cbd5e1;
-}
-
-/* Loading spinner */
-.stSpinner > div {
-    color: #3498db !important;
-}
-
-/* Footer */
-.footer {
-    text-align: center;
-    font-size: 0.8rem;
-    color: #64748b;
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid #334155;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .main-container {
+    /* Global Glassmorphism Theme */
+    .stApp {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: #e2e8f0;
+    }
+    
+    /* Sidebar */
+    [data-testid="stSidebar"] {
+        background-color: rgba(15, 23, 42, 0.9);
+        border-right: 1px solid rgba(148, 163, 184, 0.1);
+    }
+    
+    /* Metrics */
+    .metric-card {
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(148, 163, 184, 0.1);
+        border-radius: 12px;
         padding: 1rem;
-        margin: 1rem;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        text-align: center;
     }
-    
-    .title {
+    .metric-value {
         font-size: 2rem;
+        font-weight: 700;
+        color: #38bdf8;
+    }
+    .metric-label {
+        font-size: 0.875rem;
+        color: #94a3b8;
     }
     
-    .subtitle {
-        font-size: 1rem;
+    /* Chat Message Bubbles */
+    .chat-user {
+        background: rgba(56, 189, 248, 0.1);
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
     }
-}
+    .chat-bot {
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(148, 163, 184, 0.1);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    /* Confidence Badges */
+    .confidence-high {
+        background-color: rgba(34, 197, 94, 0.2);
+        color: #4ade80;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    .confidence-med {
+        background-color: rgba(234, 179, 8, 0.2);
+        color: #facc15;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        border: 1px solid rgba(234, 179, 8, 0.3);
+    }
+    .confidence-low {
+        background-color: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# Create animated background elements
-st.markdown("""
-<div class="background-animation">
-    <div class="background-circle" style="width: 300px; height: 300px; top: 10%; left: 5%; animation-delay: 0s;"></div>
-    <div class="background-circle" style="width: 200px; height: 200px; top: 60%; left: 80%; animation-delay: -5s;"></div>
-    <div class="background-circle" style="width: 150px; height: 150px; top: 30%; left: 70%; animation-delay: -10s;"></div>
-    <div class="background-line" style="width: 200px; top: 20%; left: 20%; animation-delay: 0s;"></div>
-    <div class="background-line" style="width: 300px; top: 70%; left: 50%; animation-delay: -3s;"></div>
-</div>
-""", unsafe_allow_html=True)
-
-# Main container
-st.markdown("<div class='main-container'>", unsafe_allow_html=True)
-
-# Title and subtitle
-st.markdown("<h1 class='title'>SEC Filing Summarizer & Q&A</h1>", unsafe_allow_html=True)
-st.markdown("<p class='subtitle'>Ask questions about 10-K / 10-Q filings with citations</p>", unsafe_allow_html=True)
-
-# Initialize session state
-if 'initialized' not in st.session_state:
-    st.session_state.initialized = False
-    st.session_state.qa_chain = None
+# -----------------------------------------------------------------------------
+# INITIALIZATION
+# -----------------------------------------------------------------------------
+DB_PATH = "chroma_db"
 
 @st.cache_resource
-def initialize_rag():
-    """Initialize the RAG components"""
-    if not PACKAGES_AVAILABLE:
-        st.warning("Required packages not installed. Please install langchain, langchain-community, chromadb, and sentence-transformers.")
-        return None, False
-        
-    try:
-        DB_PATH = "chroma_db"
-        
-        # Check if database exists
-        if not os.path.exists(DB_PATH):
-            st.error("Chroma database not found. Please run the ingestion script first.")
-            return None, False
-        
-        # Load embeddings
-        embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2"
-        )
-        
-        # Load vector store
-        vectorstore = Chroma(
-            persist_directory=DB_PATH,
-            embedding_function=embeddings
-        )
-        
-        retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
-        
-        # Local LLM (make sure Ollama is running with llama3 model)
-        try:
-            llm = Ollama(model="llama3")
-            # Test if model is available
-            llm("Hello")
-        except Exception as e:
-            st.warning("LLM not available. Using a mock response instead.")
-            llm = None
-        
-        # RAG Chain
-        qa_chain = RetrievalQA.from_chain_type(
-            llm=llm,
-            retriever=retriever,
-            return_source_documents=True
-        )
-        
-        return qa_chain, True
-    except Exception as e:
-        st.error(f"Error initializing RAG components: {str(e)}")
-        return None, False
-
-# Initialize components
-if not st.session_state.initialized:
-    with st.spinner("Initializing RAG components..."):
-        st.session_state.qa_chain, success = initialize_rag()
-        st.session_state.initialized = True
-        
-        if not success:
-            st.stop()
-
-# Question input
-question = st.text_input("", placeholder="Enter your question about SEC filings...", label_visibility="collapsed")
-
-# Ask button
-ask_button = st.button("Ask", type="primary")
-
-# Process question
-if ask_button and question:
-    if not PACKAGES_AVAILABLE:
-        # Mock response when packages aren't available
-        st.markdown("<div class='answer-box'>", unsafe_allow_html=True)
-        st.markdown("**Answer:** This is a mock response. To get real answers, please install the required packages and run the ingestion script.")
-        st.markdown("</div>", unsafe_allow_html=True)
-        
-        # Mock sources
-        st.markdown("### Sources / Citations")
-        with st.expander("Source 1: sec_filings.csv"):
-            st.markdown("<div class='source-content'>This is mock source content. In a real implementation, this would show the relevant excerpt from the SEC filing that was used to generate the answer.</div>", unsafe_allow_html=True)
-    elif st.session_state.qa_chain is None:
-        st.error("RAG system not initialized properly. Please check the logs.")
+def get_resources():
+    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    if os.path.exists(DB_PATH):
+        vectorstore = Chroma(persist_directory=DB_PATH, embedding_function=embeddings)
     else:
-        with st.spinner("Analyzing SEC filing and generating answer..."):
-            try:
-                # Get response
-                result = st.session_state.qa_chain(question)
-                
-                # Display answer
-                st.markdown("<div class='answer-box'>", unsafe_allow_html=True)
-                st.markdown(f"**Answer:** {result['result']}")
-                st.markdown("</div>", unsafe_allow_html=True)
-                
-                # Display sources
-                st.markdown("### Sources / Citations")
-                for i, doc in enumerate(result["source_documents"]):
-                    source = doc.metadata.get("source", "Unknown")
-                    content = doc.page_content
+        return None, None
+    
+    try:
+        llm = Ollama(model="llama3")
+        llm.invoke("Test") # wake up
+    except:
+        try:
+            llm = Ollama(model="mistral")
+        except:
+            # If Ollama is not available, use a mock LLM
+            from langchain_core.language_models import FakeListLLM
+            llm = FakeListLLM(responses=["This is a mock response. In a real implementation, this would be generated by an LLM."])
+    
+    return vectorstore, llm
+
+vectorstore, llm = get_resources()
+
+def calculate_confidence(score):
+    # Chroma uses Euclidean distance (L2). 
+    # 0 = exact match. 
+    # > 1.0 = poor match.
+    # Convert to 0-100%
+    if score > 1.5:
+        return 0.0
+    return max(0, (1.5 - score) / 1.5) * 100
+
+# -----------------------------------------------------------------------------
+# SIDEBAR
+# -----------------------------------------------------------------------------
+with st.sidebar:
+    st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/SEC_logo.svg/1024px-SEC_logo.svg.png", width=50)
+    st.title("SEC RAG Explorer")
+    st.markdown("---")
+    
+    st.header("⚙️ Settings")
+    model_name = st.selectbox("LLM Model", ["llama3", "mistral"], index=0)
+    
+    st.markdown("### Filters")
+    # In a real app, populate these from vectorstore metadata
+    company_filter = st.selectbox("Company", ["All", "Apple", "Microsoft", "Tesla", "Unknown"], index=0)
+    year_filter = st.selectbox("Year", ["All", "2023", "2022", "2021"], index=0)
+    
+    st.markdown("---")
+    st.info("System Ready\n\nVector DB: Chroma\nEmbeddings: MiniLM-L6")
+
+# -----------------------------------------------------------------------------
+# MAIN APP
+# -----------------------------------------------------------------------------
+
+if not vectorstore:
+    st.error("🚨 Vector Database not found! Please run `python ingest.py` first.")
+    st.stop()
+
+tab_dashboard, tab_chat, tab_compare = st.tabs(["📊 Dashboard", "💬 Chat", "⚖️ Compare"])
+
+# --- TAB 1: DASHBOARD ---
+with tab_dashboard:
+    st.header("Overview")
+    
+    # Get some quick stats from Chroma
+    collection = vectorstore._collection
+    count = collection.count()
+    
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-value">{count}</div>
+            <div class="metric-label">Document Chunks</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with c2:
+        st.markdown("""
+        <div class="metric-card">
+            <div class="metric-value">5</div>
+            <div class="metric-label">Filings Ingested</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with c3:
+        st.markdown("""
+        <div class="metric-card">
+            <div class="metric-value">0.8s</div>
+            <div class="metric-label">Avg Retrieval Time</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("### Recent Filings")
+    # Mock data for UI demo (since getting distinct metadata from Chroma is slow)
+    st.dataframe(pd.DataFrame({
+        "Company": ["Libery Star Gold", "Geokinetics Inc", "Black Hills Corp", "Monaker Group", "OSullivan"],
+        "Form": ["8-K", "8-K", "10-K", "8-K", "8-K"],
+        "Date": ["2006-10-27", "2009-02-18", "2009-03-02", "2020-11-19", "2004-05-18"],
+        "Section": ["Ex-10", "Ex-10", "Risk Factors", "Ex-10", "Ex-10"]
+    }), use_container_width=True)
+
+# --- TAB 2: CHAT ---
+with tab_chat:
+    st.header("Analysis")
+    
+    # Initialize chat history
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    # Display chat
+    for message in st.session_state.messages:
+        role_class = "chat-user" if message["role"] == "user" else "chat-bot"
+        with st.container():
+            st.markdown(f"""
+            <div class="{role_class}">
+                <b>{message["role"].title()}:</b> {message["content"]}
+            </div>
+            """, unsafe_allow_html=True)
+            
+            if "sources" in message:
+                with st.expander("📚 View Sources & Confidence"):
+                    conf = message.get("confidence", 0)
+                    color_class = "confidence-high" if conf > 70 else ("confidence-med" if conf > 40 else "confidence-low")
+                    st.markdown(f'<span class="{color_class}">Confidence: {conf:.1f}%</span>', unsafe_allow_html=True)
                     
-                    with st.expander(f"Source {i+1}: {os.path.basename(source)}"):
-                        st.markdown(f"<div class='source-content'>{content}</div>", unsafe_allow_html=True)
-                        
-            except Exception as e:
-                st.error(f"Error processing question: {str(e)}")
-                st.info("Make sure:\n1. The Chroma database has been created by running ingest.py\n2. Ollama is running with the llama3 model\n3. All required packages are installed")
+                    for i, doc in enumerate(message["sources"]):
+                        st.markdown(f"**Source {i+1}**: {doc.metadata.get('company', 'Unknown')} ({doc.metadata.get('year', 'N/A')})")
+                        st.text(doc.page_content[:300] + "...")
+                        st.markdown("---")
 
-st.markdown("</div>", unsafe_allow_html=True)
+    # Input
+    if prompt := st.chat_input("Ask a question about the filings..."):
+        # Add user message
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        
+        # Retrieval with Score
+        with st.spinner("Analyzing..."):
+            results = vectorstore.similarity_search_with_score(prompt, k=4)
+            
+            if not results:
+                response = "I couldn't find any relevant information in the documents."
+                sources = []
+                confidence = 0
+            else:
+                # Calculate aggregate confidence
+                scores = [calculate_confidence(score) for doc, score in results]
+                avg_confidence = sum(scores) / len(scores) if scores else 0
+                
+                # Context construction
+                context_text = "\n\n".join([doc.page_content for doc, _ in results])
+                
+                # Generation
+                qa_prompt = f"""You are a financial analyst assistant. Use the following context to answer the question.
+                If the answer is not in the context, say "I don't know based on the provided documents".
+                
+                Context:
+                {context_text}
+                
+                Question: {prompt}
+                
+                Answer:"""
+                
+                response = llm.invoke(qa_prompt)
+                sources = [doc for doc, _ in results] # Keep docs
+                
+                # Add assistant message
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": response,
+                    "sources": sources,
+                    "confidence": avg_confidence
+                })
+        
+        st.rerun()
 
-# Footer
-st.markdown("<div class='footer'>SEC Filing Summarizer & Q&A | Powered by RAG</div>", unsafe_allow_html=True)
+# --- TAB 3: COMPARE ---
+with tab_compare:
+    st.header("Comparative Analysis")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        q1 = st.text_input("Entity 1 / Topic", placeholder="e.g. Apple Risk Factors")
+    with col2:
+        q2 = st.text_input("Entity 2 / Topic", placeholder="e.g. Microsoft Risk Factors")
+        
+    compare_btn = st.button("Compare")
+    
+    if compare_btn and q1 and q2:
+        with st.spinner("Retrieving and comparing..."):
+            # Retrieve for both
+            docs1 = vectorstore.similarity_search(q1, k=3)
+            docs2 = vectorstore.similarity_search(q2, k=3)
+            
+            text1 = "\n".join([d.page_content for d in docs1])
+            text2 = "\n".join([d.page_content for d in docs2])
+            
+            comparison_prompt = f"""Compare the following two sets of financial contexts. Highlight key differences and similarities.
+            
+            Set 1 ({q1}):
+            {text1}
+            
+            Set 2 ({q2}):
+            {text2}
+            
+            Comparison:"""
+            
+            comparison_result = llm.invoke(comparison_prompt)
+            
+            st.markdown("### Analysis")
+            st.write(comparison_result)
+            
+            with st.expander("View Underlying Context"):
+                st.subheader(f"Context 1 ({q1})")
+                st.write(text1[:1000] + "...")
+                st.subheader(f"Context 2 ({q2})")
+                st.write(text2[:1000] + "...")

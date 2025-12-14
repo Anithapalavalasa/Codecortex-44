@@ -89,6 +89,7 @@ def apply_theme():
         color: var(--text-color);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         overflow-x: hidden;
+        background: linear-gradient(135deg, #0f172a, #1e293b);
     }
     
     /* Glossy effect */
@@ -113,6 +114,7 @@ def apply_theme():
         text-align: center;
         margin-bottom: 2rem;
         position: relative;
+        animation: fadeIn 0.8s ease-out;
     }
     
     .title {
@@ -125,6 +127,7 @@ def apply_theme():
         text-shadow: 0 2px 10px rgba(77, 124, 255, 0.2);
         position: relative;
         z-index: 2;
+        animation: slideIn 0.8s ease-out;
     }
     
     .subtitle {
@@ -133,6 +136,24 @@ def apply_theme():
         margin-bottom: 1rem;
         position: relative;
         z-index: 2;
+        animation: slideIn 1s ease-out;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes slideIn {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+        100% { transform: scale(1); }
     }
     
     .card {
@@ -145,24 +166,13 @@ def apply_theme():
         backdrop-filter: blur(10px);
         position: relative;
         overflow: hidden;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: all 0.3s ease;
         /* Apply glossy effect */
         background: linear-gradient(135deg, rgba(77, 124, 255, 0.1), rgba(77, 124, 255, 0));
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border: 1px solid rgba(77, 124, 255, 0.18);
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    }
-    
-    .card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--accent-color), #6a5acd);
-        border-radius: 15px 15px 0 0;
     }
     
     .card:hover {
@@ -178,6 +188,7 @@ def apply_theme():
         padding: 1rem !important;
         font-size: 1.1rem !important;
         box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
         /* Apply glossy effect */
         background: linear-gradient(135deg, rgba(77, 124, 255, 0.1), rgba(77, 124, 255, 0));
         backdrop-filter: blur(10px);
@@ -188,6 +199,7 @@ def apply_theme():
     .stTextInput > div > div > input:focus {
         border-color: var(--accent-color) !important;
         box-shadow: 0 0 0 3px rgba(77, 124, 255, 0.2) !important;
+        transform: scale(1.02);
     }
     
     .stButton > button {
@@ -209,6 +221,7 @@ def apply_theme():
         -webkit-backdrop-filter: blur(10px);
         border: 1px solid rgba(77, 124, 255, 0.18);
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        animation: pulse 2s infinite;
     }
     
     .stButton > button::before {
@@ -229,6 +242,7 @@ def apply_theme():
     .stButton > button:hover {
         transform: translateY(-2px) !important;
         box-shadow: 0 6px 20px rgba(77, 124, 255, 0.4) !important;
+        animation: none;
     }
     
     .answer-box {
@@ -239,12 +253,17 @@ def apply_theme():
         margin-top: 1.2rem;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         backdrop-filter: blur(5px);
+        transition: all 0.3s ease;
         /* Apply glossy effect */
         background: linear-gradient(135deg, rgba(77, 124, 255, 0.1), rgba(77, 124, 255, 0));
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border: 1px solid rgba(77, 124, 255, 0.18);
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    
+    .answer-box:hover {
+        transform: translateX(5px);
     }
     
     .source-card {
@@ -254,12 +273,17 @@ def apply_theme():
         padding: 1.2rem;
         margin-top: 1.2rem;
         backdrop-filter: blur(5px);
+        transition: all 0.3s ease;
         /* Apply glossy effect */
         background: linear-gradient(135deg, rgba(77, 124, 255, 0.1), rgba(77, 124, 255, 0));
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border: 1px solid rgba(77, 124, 255, 0.18);
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    
+    .source-card:hover {
+        transform: translateX(5px);
     }
     
     .source-header {
@@ -296,7 +320,7 @@ def apply_theme():
     }
     
     .theme-toggle:hover {
-        transform: rotate(20deg);
+        transform: rotate(20deg) scale(1.1);
     }
     
     .footer {
@@ -308,6 +332,7 @@ def apply_theme():
         font-size: 0.95rem;
         position: relative;
         z-index: 2;
+        animation: fadeIn 1.5s ease-out;
     }
     
     @media (max-width: 768px) {
